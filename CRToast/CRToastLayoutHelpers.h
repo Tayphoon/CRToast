@@ -6,6 +6,27 @@
 #import <Foundation/Foundation.h>
 #import "CRToast.h" // For NS_ENUM values
 
+#ifndef IsIPhoneX
+#define IsIPhoneX           (isIPhoneXScreen())
+#endif
+
+#ifndef kNaviBarHeightOffset
+#define kNaviBarHeightOffset (IsIPhoneX ? 24 : 0)
+#endif
+
+static inline BOOL isIPhoneXScreen (void) {
+    if (@available(iOS 11.0, *)) {
+        UIEdgeInsets edgInsets = [UIApplication sharedApplication].keyWindow.safeAreaInsets;
+        
+        if (edgInsets.top > 0 &&
+            edgInsets.bottom > 0) {
+            return YES;
+        }
+    }
+    
+    return NO;
+}
+
 /**
  `BOOL` to determine if the frame is automatically adjusted for orientation. iOS 8 automatically accounts for orientation when getting frame where as iOS 7 does not.
  If/when iOS 7 support is dropped this check will no longer be necessary
@@ -111,7 +132,13 @@ static CGFloat CRGetNotificationViewHeightForOrientation(CRToastType type, CGFlo
         case CRToastTypeStatusBar:
             return CRGetStatusBarHeightForOrientation(orientation);
         case CRToastTypeNavigationBar:
-            return CRGetStatusBarHeightForOrientation(orientation) + CRGetNavigationBarHeightForOrientation(orientation);
+        {
+            CGFloat height = CRGetStatusBarHeightForOrientation(orientation) + CRGetNavigationBarHeightForOrientation(orientation);
+            if (IsIPhoneX) {
+                height = MAX(88, height);
+            }
+            return  height;
+        }
         case CRToastTypeCustom:
             return preferredNotificationHeight;
     }
