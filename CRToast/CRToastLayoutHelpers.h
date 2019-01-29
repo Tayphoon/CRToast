@@ -132,13 +132,7 @@ static CGFloat CRGetNotificationViewHeightForOrientation(CRToastType type, CGFlo
         case CRToastTypeStatusBar:
             return CRGetStatusBarHeightForOrientation(orientation);
         case CRToastTypeNavigationBar:
-        {
-            CGFloat height = CRGetStatusBarHeightForOrientation(orientation) + CRGetNavigationBarHeightForOrientation(orientation);
-            if (IsIPhoneX) {
-                height = MAX(88, height);
-            }
-            return  height;
-        }
+            return CRGetStatusBarHeightForOrientation(orientation) + CRGetNavigationBarHeightForOrientation(orientation);
         case CRToastTypeCustom:
             return preferredNotificationHeight;
     }
@@ -205,7 +199,7 @@ static CGRect CRStatusBarViewFrame(CRToastType type, CRToastAnimationDirection d
 #pragma mark - Notification Container Frame
 /// Get the notifications container frame based on orientation & notification size
 static CGRect CRGetNotificationContainerFrame(UIInterfaceOrientation statusBarOrientation, CGSize notificationSize) {
-    CGRect containerFrame = CGRectMake(0, 0, notificationSize.width, notificationSize.height);
+    CGRect containerFrame = CGRectMake(0, kNaviBarHeightOffset, notificationSize.width, notificationSize.height);
 
     if (!CRFrameAutoAdjustedForOrientation()) {
         switch (statusBarOrientation) {
